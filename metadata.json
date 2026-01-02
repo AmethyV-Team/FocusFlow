@@ -1,0 +1,5 @@
+{
+  "name": "FocusFlow",
+  "description": "A dynamic task visualization dashboard with velocity tracking, Kanban flow, burnout alerts, and AI-powered workflow insights.",
+  "requestFramePermissions": []
+}

@@ -1,0 +1,99 @@
+<div class="h-screen flex flex-col bg-slate-50 font-sans">
+  
+  <!-- Header -->
+  <header class="bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center shadow-sm z-20">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-200">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-xl font-extrabold text-slate-800 tracking-tight">FocusFlow</h1>
+        <p class="text-xs text-slate-500 font-medium">Visual Productivity Pipeline</p>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-6">
+      
+      <!-- Action Buttons -->
+      <div class="flex items-center gap-3">
+        <button 
+          (click)="getAiInsight()" 
+          [disabled]="aiLoading()"
+          class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-lg hover:shadow-lg hover:shadow-purple-200 transition-all disabled:opacity-70 disabled:cursor-wait font-semibold text-sm">
+          @if (aiLoading()) {
+            <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          } @else {
+             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          }
+          AI Coach
+        </button>
+
+        <button 
+          (click)="toggleAddModal()" 
+          class="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 shadow-md hover:shadow-lg transition-all font-semibold text-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          New Task
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="flex flex-1 overflow-hidden relative">
+    
+    <!-- Sidebar / Velocity Meter -->
+    <aside class="w-64 bg-white border-r border-slate-200 flex flex-col p-6 gap-6 z-10 hidden md:flex">
+      <app-velocity-meter 
+        [current]="taskService.velocity()"
+        [goal]="5"
+      ></app-velocity-meter>
+
+      <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+        <h4 class="text-indigo-900 font-bold text-sm mb-2">Did You Know?</h4>
+        <p class="text-indigo-700 text-xs leading-relaxed">
+          Keeping tasks in "In Progress" too long increases cognitive load. Try to finish one thing before starting another.
+        </p>
+      </div>
+    </aside>
+
+    <!-- Main Board Area -->
+    <main class="flex-1 bg-slate-50 pt-6 h-full relative">
+      <app-board></app-board>
+
+      <!-- AI Advice Overlay -->
+      @if (aiAdvice()) {
+        <div class="absolute bottom-6 right-6 max-w-md bg-white p-6 rounded-2xl shadow-2xl border border-purple-100 z-50 animate-bounce-in">
+          <div class="flex justify-between items-start mb-2">
+            <h3 class="text-lg font-bold text-purple-900 flex items-center gap-2">
+              <span class="text-2xl">🤖</span> AI Insight
+            </h3>
+            <button (click)="closeAiAdvice()" class="text-slate-400 hover:text-slate-600">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <p class="text-slate-600 text-sm leading-relaxed">
+            {{ aiAdvice() }}
+          </p>
+        </div>
+      }
+    </main>
+  </div>
+
+  <!-- Modal -->
+  @if (showAddModal()) {
+    <app-add-task-modal 
+      (close)="toggleAddModal()" 
+      (save)="addTask($event)">
+    </app-add-task-modal>
+  }
+</div>
